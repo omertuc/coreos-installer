@@ -138,12 +138,12 @@ fn write_unpacked_image(
     let mut cursor: u64 = 0;
     for partition in partitions {
         assert!(partition.start_offset >= cursor);
-        cursor += copy_exactly_n(packed_image, w, partition.start_offset - cursor, &mut buf)?;
-        cursor += write_partition(w, partition, packed_image, repo, &mut buf)?;
+        cursor += copy_exactly_n(packed_image, w, partition.start_offset - cursor, &mut buf).unwrap();
+        cursor += write_partition(w, partition, packed_image, repo, &mut buf).unwrap();
     }
 
     // and copy the rest
-    cursor += copy(packed_image, w)?;
+    cursor += copy(packed_image, w).unwrap();
 
     Ok(cursor)
 }
