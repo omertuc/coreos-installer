@@ -170,22 +170,22 @@ fn write_partition(
         let extent_start = mapping.extent.physical + partition.start_offset;
         assert!(extent_start >= cursor);
         if cursor < extent_start {
-            cursor += copy_exactly_n(packed_image, w, extent_start - cursor, buf)?;
+            cursor += copy_exactly_n(packed_image, w, extent_start - cursor, buf).with_context(|| "here")?;
         }
 
-        checksum_to_object_path(&mapping.object, &mut object_pathbuf)?;
+        checksum_to_object_path(&mapping.object, &mut object_pathbuf).with_context(|| "there")?;
         cursor += write_partition_mapping(
             &mapping.extent,
             Path::new(OsStr::from_bytes(object_pathbuf.as_slice())),
             w,
             buf,
-        )?;
+        ).with_context(|| "everywhere")?;
         object_pathbuf.truncate(object_pathbuf_n);
     }
 
     // and copy to the rest of the partition
     assert!(partition.end_offset >= cursor);
-    cursor += copy_exactly_n(packed_image, w, partition.end_offset - cursor, buf)?;
+    cursor += copy_exactly_n(packed_image, w, partition.end_offset - cursor, buf).with_context(|| "!!")?;
 
     // subtract back the partition offset here so we only return the actual size of the partition
     Ok(cursor - partition.start_offset)
