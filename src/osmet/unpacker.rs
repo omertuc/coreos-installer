@@ -217,10 +217,10 @@ fn write_partition_mapping(
 
     let mut n = 0;
     if objlen < extent.length {
-        n += copy_exactly_n(&mut object, w, objlen, buf)?;
-        n += copy_exactly_n(&mut io::repeat(0), w, extent.length - objlen, buf)?;
+        n += copy_exactly_n(&mut object, w, objlen, buf).with_context(|| format!("getting metadata for {:?}", object))?;
+        n += copy_exactly_n(&mut io::repeat(0), w, extent.length - objlen, buf).with_context(|| format!("getting metadata for {:?}", object))?;
     } else {
-        n += copy_exactly_n(&mut object, w, extent.length, buf)?;
+        n += copy_exactly_n(&mut object, w, extent.length, buf).with_context(|| format!("getting metadata for {:?}", object))?;
     }
 
     Ok(n)
